@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  TEAM_LEAD
+  CTO
+  EMPLOYEE
+}
+
+enum Grade {
+  EXCEEDS
+  MEETS
+  BELOW
+}
+
+enum Decision {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id             String         @id @default(cuid())
+  name           String
+  email          String         @unique
+  password       String
+  role           Role
+  monthlyEntries MonthlyEntry[]
+  appraisals     Appraisal[]
+}
+
+model Dimension {
+  id        String     @id @default(cuid())
+  name      String
+  questions Question[]
+}
+
+model Question {
+  id          String               @id @default(cuid())
+  text        String
+  dimensionId String
+  dimension   Dimension            @relation(fields: [dimensionId], references: [id])
+  answers     MonthlyEntryAnswer[]
+}
+
+model MonthlyEntry {
+  id          String               @id @default(cuid())
+  developerId String
+  developer   User                 @relation(fields: [developerId], references: [id])
+  month       Int
+  year        Int
+  answers     MonthlyEntryAnswer[]
+  createdAt   DateTime             @default(now())
+
+  @@unique([developerId, month, year])
+}
+
+model MonthlyEntryAnswer {
+  id             String       @id @default(cuid())
+  monthlyEntryId String
+  monthlyEntry   MonthlyEntry @relation(fields: [monthlyEntryId], references: [id])
+  questionId     String
+  question       Question     @relation(fields: [questionId], references: [id])
+  grade          Grade
+}
+
+model Appraisal {
+  id          String   @id @default(cuid())
+  developerId String
+  developer   User     @relation(fields: [developerId], references: [id])
+  year        Int
+  finalGrade  Grade
+  decision    Decision @default(PENDING)
+  ctoNote     String?
+  createdAt   DateTime @default(now())
+
+  @@unique([developerId, year])
+}
