@@ -54,7 +54,7 @@ export default async function AppraisalsPage() {
         </p>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-900/40 shadow-xl shadow-black/20">
+      <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
         <Table>
           <TableHeader>
             <TableRow>

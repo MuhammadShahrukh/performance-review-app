@@ -35,7 +35,7 @@ const THRESHOLDS: {
 /** The 3-point scale — shown where a rater picks grades (entry form). */
 export function GradeScaleHint() {
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-900/40 p-4">
+    <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
       <p className="mb-3 text-sm font-medium">What the grades mean</p>
       <ul className="flex flex-col gap-2.5">
         {GRADE_MEANING.map((g) => (
@@ -59,7 +59,7 @@ export function GradeScaleHint() {
 /** Thresholds + recommendation mapping — shown on the appraisal detail. */
 export function ThresholdHint() {
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-900/40 p-4">
+    <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
       <p className="mb-3 text-sm font-medium">How the final grade is decided</p>
       <div className="flex flex-col gap-2">
         {THRESHOLDS.map((t) => (

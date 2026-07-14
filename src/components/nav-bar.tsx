@@ -44,7 +44,7 @@ export function NavBar({ user }: { user: NavUser }) {
     .join("");
 
   return (
-    <header className="sticky top-0 z-20 border-b border-sky-400/15 bg-gradient-to-r from-slate-950/85 via-slate-900/75 to-slate-950/85 shadow-lg shadow-black/30 backdrop-blur-xl">
+    <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/85 shadow-sm backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         <div className="flex items-center gap-7">
           <Link href="/" className="flex items-center gap-2.5">

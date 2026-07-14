@@ -106,7 +106,7 @@ export function EntryForm({
   return (
     <div className="flex flex-col gap-6">
       {/* Period selector */}
-      <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-900/40 p-4 shadow-lg shadow-black/20">
+      <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
         <label className="text-sm font-medium">Period</label>
         <select
           value={month}

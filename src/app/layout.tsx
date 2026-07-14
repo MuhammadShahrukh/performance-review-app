@@ -31,9 +31,9 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${jakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950">
+      <body className="flex min-h-full flex-col bg-gradient-to-b from-sky-50 via-white to-white text-foreground">
         {user && (
           <NavBar
             user={{

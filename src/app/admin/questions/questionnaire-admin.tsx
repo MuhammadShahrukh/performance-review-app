@@ -120,7 +120,7 @@ export function QuestionnaireAdmin({
               <div className="flex items-center gap-2">
                 <span className="font-semibold">{d.name}</span>
                 {!d.active && (
-                  <Badge className="border-transparent bg-zinc-700 text-zinc-200">
+                  <Badge className="border-transparent bg-zinc-200 text-zinc-600">
                     Archived
                   </Badge>
                 )}
@@ -164,7 +164,7 @@ export function QuestionnaireAdmin({
             {d.questions.map((q) => (
               <div
                 key={q.id}
-                className="flex items-center justify-between gap-2 rounded-lg border border-white/5 bg-slate-950/30 px-3 py-2"
+                className="flex items-center justify-between gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2"
               >
                 <span
                   className={cn(
@@ -176,7 +176,7 @@ export function QuestionnaireAdmin({
                 </span>
                 <div className="flex shrink-0 items-center gap-1.5">
                   {!q.active && (
-                    <Badge className="border-transparent bg-zinc-700 text-zinc-200">
+                    <Badge className="border-transparent bg-zinc-200 text-zinc-600">
                       Archived
                     </Badge>
                   )}
