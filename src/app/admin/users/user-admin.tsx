@@ -246,7 +246,7 @@ export function UserAdmin({
                 </TableCell>
                 <TableCell>
                   {u.type === "ADMIN" ? (
-                    <Badge className="border-transparent bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
+                    <Badge className="border-transparent bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300">
                       Admin
                     </Badge>
                   ) : (

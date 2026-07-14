@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/logo";
 import { ROLE_LABEL, TEAM_LABEL } from "@/lib/labels";
 import type { Role, UserType, Team } from "@/types";
 
@@ -43,16 +44,12 @@ export function NavBar({ user }: { user: NavUser }) {
     .join("");
 
   return (
-    <header className="sticky top-0 z-20 border-b border-indigo-400/15 bg-gradient-to-r from-slate-950/85 via-slate-900/75 to-slate-950/85 shadow-lg shadow-black/30 backdrop-blur-xl">
+    <header className="sticky top-0 z-20 border-b border-sky-400/15 bg-gradient-to-r from-slate-950/85 via-slate-900/75 to-slate-950/85 shadow-lg shadow-black/30 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         <div className="flex items-center gap-7">
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white shadow-sm">
-              PR
-            </span>
-            <span className="hidden font-semibold tracking-tight sm:inline">
-              Performance&nbsp;Review
-            </span>
+            <Logo size={30} className="hidden sm:flex" />
+            <Logo size={30} wordmark={false} className="sm:hidden" />
           </Link>
           <nav className="flex gap-1">
             {links.map((l) => {
@@ -65,7 +62,7 @@ export function NavBar({ user }: { user: NavUser }) {
                   className={cn(
                     "rounded-lg px-3 py-1.5 text-sm transition-colors",
                     active
-                      ? "bg-indigo-50 font-semibold text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300"
+                      ? "bg-sky-50 font-semibold text-sky-700 dark:bg-sky-950/60 dark:text-sky-300"
                       : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100",
                   )}
                 >

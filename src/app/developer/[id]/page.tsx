@@ -119,7 +119,7 @@ export default async function DeveloperPage({
             </CardHeader>
             <CardContent>
               <div className="mb-6 flex items-center gap-4">
-                <div className="bg-gradient-to-br from-indigo-600 to-violet-600 bg-clip-text text-4xl font-bold tabular-nums text-transparent dark:from-indigo-400 dark:to-violet-400">
+                <div className="bg-gradient-to-br from-sky-600 to-blue-600 bg-clip-text text-4xl font-bold tabular-nums text-transparent dark:from-sky-400 dark:to-blue-400">
                   {summary.finalScore.toFixed(2)}
                 </div>
                 <div className="flex flex-col gap-1">

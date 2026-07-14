@@ -46,7 +46,7 @@ export function DecisionBadge({ decision }: { decision: Decision }) {
 }
 
 const TEAM_CLASSES: Record<Team, string> = {
-  API: "border-transparent bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300",
+  API: "border-transparent bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
   CRM: "border-transparent bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300",
   HRM: "border-transparent bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300",
   UI: "border-transparent bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-300",

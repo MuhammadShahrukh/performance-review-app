@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <li className="flex gap-3">
-      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-500/15 text-xs font-semibold text-indigo-400">
+      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sky-500/15 text-xs font-semibold text-sky-400">
         {n}
       </span>
       <span className="text-sm text-muted-foreground">{children}</span>
@@ -70,7 +70,7 @@ export default async function GuidePage() {
               <div className="flex flex-col gap-4">
                 {dimensions.map((dim) => (
                   <div key={dim.id}>
-                    <p className="text-sm font-medium text-indigo-400">
+                    <p className="text-sm font-medium text-sky-400">
                       {dim.name}
                     </p>
                     <ul className="mt-1 list-inside list-disc text-sm text-muted-foreground">
