@@ -68,8 +68,8 @@ export function NavBar({ user }: { user: NavUser }) {
         </div>
         <div className="flex items-center gap-3 text-sm">
           <div className="hidden items-center sm:flex">
-            <Logo size={40} wordmark={false} className="relative z-10 -mr-2" />
-            <div className="flex flex-col justify-center rounded-full bg-[#ee8b4c] py-1 pl-10 pr-5 leading-tight text-white shadow-sm">
+            <Logo size={40} wordmark={false} className="relative z-10 -mr-3" />
+            <div className="flex flex-col justify-center rounded-full bg-[#ee8b4c] py-1 pl-5 pr-4 leading-tight text-white shadow-sm">
               <span className="text-sm font-semibold">{user.name}</span>
               <span className="text-[11px] text-white/85">
                 {ROLE_LABEL[user.role]}
