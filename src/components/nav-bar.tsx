@@ -37,12 +37,6 @@ export function NavBar({ user }: { user: NavUser }) {
     router.refresh();
   }
 
-  const initials = user.name
-    .split(" ")
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join("");
-
   return (
     <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/85 shadow-sm backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
@@ -73,15 +67,11 @@ export function NavBar({ user }: { user: NavUser }) {
           </nav>
         </div>
         <div className="flex items-center gap-3 text-sm">
-          <div className="hidden items-center gap-2.5 sm:flex">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-              {initials}
-            </span>
-            <div className="flex flex-col leading-tight">
-              <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                {user.name}
-              </span>
-              <span className="text-xs text-zinc-500">
+          <div className="hidden items-center sm:flex">
+            <Logo size={40} wordmark={false} className="relative z-10 -mr-3" />
+            <div className="flex flex-col justify-center rounded-full bg-[#ee8b4c] py-1 pl-5 pr-4 leading-tight text-white shadow-sm">
+              <span className="text-sm font-semibold">{user.name}</span>
+              <span className="text-[11px] text-white/85">
                 {ROLE_LABEL[user.role]}
                 {user.team ? ` · ${TEAM_LABEL[user.team]}` : ""}
                 {user.type === "ADMIN" ? " · Admin" : ""}
