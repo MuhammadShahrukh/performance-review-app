@@ -1,139 +1,196 @@
 # Performance Review App — Project Context
 
-This project was planned in a prior session. Read this file before doing anything.
-Full business requirements and technical design are documented in README.md.
+Read this before doing anything. Full business/technical spec is in README.md.
 
 ---
 
 ## What This App Does
 
-Internal tool for a Team Lead to log monthly performance ratings for 8 senior employees.
-At appraisal time, the system averages monthly data into a yearly grade and presents it to the CTO who approves or rejects the appraisal.
+Internal tool where a **Team Lead** logs **monthly** performance ratings for the
+developers on their team. At appraisal time the system **averages** the monthly
+data into a **yearly grade**, which the **CTO** reviews and approves/rejects.
 
 ---
 
-## Current Status
+## Current Status (2026-07-14)
 
-Backend built and smoke-tested, running **JSON-first** (no database yet).
-All 7 README API routes work end-to-end. UI pages not started.
-Database is deliberately deferred — see "Data Strategy" below.
+**Deploying to Vercel + Neon Postgres.** The app has been fully migrated from the
+JSON-first prototype to **Prisma + PostgreSQL**. All code is pushed to `main`;
+Vercel builds via a `vercel-build` script that provisions the schema and seed
+automatically. **Last step pending: confirm the Vercel deploy is green and
+smoke-test the live URL** (couldn't verify from the CLI — no Vercel CLI / not
+linked locally).
+
+- **GitHub:** `git@github.com:MuhammadShahrukh/performance-review-app.git` (moved
+  here from the old InsuranceMarket-ae org; that remote was removed). Default
+  branch `main`. Pushes over SSH.
+- **DB:** Neon Postgres, provisioned via the Vercel integration.
+- **Local dev:** requires `DATABASE_URL` — run `vercel link && vercel env pull .env`,
+  then `npm run dev`. Without it the app can't start (no more JSON fallback).
 
 ---
 
-## Roles
+## Roles, User Types & Teams (the data model that matters)
 
-- TEAM_LEAD — enters monthly ratings
-- CTO — reviews yearly summaries, approves/rejects appraisals
-- EMPLOYEE — future role, will view their own ratings
+A user has **two independent axes** plus a team:
+
+- **`role`** (job/position): `CTO` · `TEAM_LEAD` · `DEVELOPER`
+  - `EMPLOYEE` was renamed to `DEVELOPER`. `role` drives the review workflow.
+- **`type`** (access tier): `MEMBER` · `ADMIN`
+  - Admin = manage users + questionnaire. Independent of role. The CTO is ADMIN.
+- **`team`**: `API` · `CRM` · `HRM` · `UI` · `null` (CTO is org-wide → null)
+
+**Visibility:** Team Lead sees only their own team's developers; CTO sees all.
+**Permissions:** rate ← `role=TEAM_LEAD` (own team) · approve ← `role=CTO` ·
+manage users/questionnaire ← `type=ADMIN`.
+
+---
+
+## Grading (unchanged throughout)
+
+Grades: Exceeds (3), Meets (2), Below (1). 4 dimensions × 3 questions = 12/month.
+Final = average of the 4 dimension averages (equal weight); each dimension =
+average of its questions across submitted months. **Missing months excluded.**
+Final score uses RAW (unrounded) dimension averages, then maps to a grade:
+- 2.5–3.0 → Exceeds · 1.5–2.49 → Meets · 1.0–1.49 → Below
+
+Recommendation: Exceeds → Strongly Recommend · Meets → Recommend · Below → Do Not
+Recommend.
 
 ---
 
 ## Tech Stack
 
-- Next.js 16 (App Router) + TypeScript  ← actual installed version (docs said 14)
-- React 19
-- Tailwind CSS v4 + shadcn/ui
-- Prisma ORM v7 (installed, NOT yet wired — JSON layer used instead for now)
-- PostgreSQL (Neon, via Vercel) — deferred
-- NextAuth.js v5 beta (installed, NOT yet wired)
-- Deployed on Vercel (app + database) — deferred
+- Next.js 16 (App Router) + React 19 + TypeScript
+- Tailwind v4 + shadcn/ui — **dark theme**, Plus Jakarta Sans + JetBrains Mono
+- **Prisma 7 + PostgreSQL (Neon)** — the live data layer
+- Auth: **cookie-session stub** with **bcryptjs-hashed** passwords (not NextAuth)
+- Deploy: Vercel
 
 ---
 
-## Grading
+## Architecture — the swap seam
 
-3 grades: Exceeds Expectations (3), Meets Expectations (2), Below Expectations (1)
-4 dimensions, 3 questions each = 12 questions per employee per month
-All dimensions equal weight. Missing months excluded from average.
+`src/lib/data/repository.ts` is the ONLY module that talks to the database
+(via Prisma). Everything else (API routes, grading, pages) depends only on its
+functions. This is how we swapped JSON → Prisma changing just this one file.
 
-Thresholds:
-- 2.5–3.0 → Exceeds Expectations
-- 1.5–2.49 → Meets Expectations
-- 1.0–1.49 → Below Expectations
+- `src/lib/prisma.ts` — PrismaClient singleton using the **`@prisma/adapter-pg`**
+  driver adapter (Prisma 7 requires an adapter), pooled `DATABASE_URL`.
+- `src/lib/grading.ts` — pure grading engine (no I/O); uses ALL dimensions/
+  questions (incl. archived) so historical appraisals keep their meaning.
+- `src/lib/summary.ts` — repository-backed wrapper around the grading core.
+- `src/lib/access.ts` — team visibility helpers (`visibleEmployees`,
+  `canAccessEmployee`).
+- `src/lib/auth.ts` — cookie session, `requireUser` / `requireRole` /
+  `requireAdmin` guards, `verifyCredentials` (bcrypt.compare).
+- `src/lib/labels.ts` — all display-label maps.
 
----
-
-## Data Strategy (JSON-first, DB later)
-
-The database is deferred. The backend runs on JSON files under `data/` behind a
-repository layer, so the DB can be swapped in later without touching API routes,
-grading, or pages.
-
-- `data/*.json` — seed data (users, dimensions, questions, monthlyEntries, answers, appraisals)
-- `src/lib/data/store.ts` — the ONLY module that touches the filesystem
-- `src/lib/data/repository.ts` — **the swap seam**. Domain operations live here.
-  When the DB is ready, reimplement this file's internals with Prisma; nothing
-  else changes.
-
----
-
-## Progress Log
-
-### Session 2026-07-14 — Backend built (JSON-first)
-
-**Types & data**
-- `src/types/index.ts` — domain types mirroring the Prisma schema, numeric
-  scoring (`GRADE_SCORE`), and computed shapes (`YearlySummary`, etc.)
-- `data/` — 6 JSON files seeded from `prisma/seed.ts`
-  (CTO + Team Lead + 1 employee, 4 dimensions, 12 questions, 1 monthly entry,
-  1 appraisal). Passwords are plaintext for now — hash when auth is wired.
-
-**Data-access layer**
-- `src/lib/data/store.ts` — generic JSON read/write, per-collection write
-  serialization, `generateId()`
-- `src/lib/data/repository.ts` — all domain ops + typed errors
-  (`NotFoundError` → 404, `ConflictError` → 409, `ValidationError` → 400)
-
-**Grading engine**
-- `src/lib/grading.ts` — pure, no I/O. question avg → dimension avg → yearly
-  score → threshold grade → recommendation. Missing months excluded; empty
-  dimensions skipped. Final score uses RAW (unrounded) dimension averages.
-- `src/lib/summary.ts` — wires the repository into the pure grading core
-
-**API routes** (`src/app/api/`) — all verified with curl against dev server:
-| Method | Route | Status |
-|---|---|---|
-| GET/POST | `/api/users` | ✅ |
-| POST | `/api/entries` | ✅ |
-| GET | `/api/entries/[developerId]` | ✅ |
-| POST | `/api/appraisals/generate` | ✅ |
-| GET | `/api/appraisals` | ✅ |
-| GET/PUT | `/api/appraisals/[id]` | ✅ |
-| GET | `/api/questions` (helper for entry form) | ✅ |
-- `src/lib/api.ts` — shared `ok`/`fail`/`handle`/`parseJson` helpers
-
-**Verified behavior**: valid writes (201), duplicate month (409), duplicate
-email (409), incomplete answers (400), bad role (400), invalid decision (400),
-missing appraisal (404), multi-month averaging (Jan 2.58 + all-MEETS Feb → 2.29).
+### Prisma 7 specifics (important — differs from older Prisma)
+- **No `url` in `schema.prisma`** — the connection URL lives in **`prisma.config.ts`**.
+- CLI (`db push`/`migrate`/`seed`) uses the **direct/unpooled** URL
+  (`DATABASE_URL_UNPOOLED` → fallback `DATABASE_URL`); the runtime client uses the
+  pooled `DATABASE_URL`. Pooled PgBouncer endpoints can reject DDL.
+- The runtime `PrismaClient` MUST be constructed with `new PrismaPg({ connectionString })`.
+- Seed command is configured in `prisma.config.ts` (`migrations.seed`), not
+  `package.json`.
 
 ---
 
-## Running the app
+## Data model (Prisma tables)
 
-```bash
-npm run dev      # → http://localhost:3000
-```
+`User(id,name,email,password,type,role,team)` ·
+`Dimension(id,name,active)` · `Question(id,text,dimensionId,active)` ·
+`MonthlyEntry(id,developerId,month,year,createdAt)` unique `[developerId,month,year]` ·
+`MonthlyEntryAnswer(id,monthlyEntryId,questionId,grade)` ·
+`Appraisal(id,developerId,year,finalGrade,decision,ctoNote,createdAt)` unique `[developerId,year]`.
 
-(Resolved 2026-07-14: a clean `rm -rf node_modules package-lock.json && npm install`
-fixed the previously-broken `.bin` shims, which had been plain file copies instead
-of symlinks. `npm run dev` and `npx tsc` now work normally.)
-
----
-
-## Known Issues / Gotchas
-
-- **2 pre-existing type errors** in `prisma/seed.ts` and `src/lib/prisma.ts` —
-  only because the Prisma client isn't generated (no DB). Harmless in JSON mode.
+- `active` on Dimension/Question enables **archiving** (soft delete). Archived
+  items drop out of new entry forms but stay in past ratings.
+- Note: the FK field is `developerId` (points at a `User` with role DEVELOPER) —
+  legacy name, means "the person being rated".
 
 ---
 
-## Next Steps
+## Features built (chronological)
 
-1. **UI pages** against the working APIs:
-   - `/login` (stub auth first, wire NextAuth later)
-   - `/dashboard` (Team Lead — employee list + entry status)
-   - `/entry/[employeeId]` (12-question monthly form)
-   - `/developer/[id]` (employee history)
-   - `/appraisals` + `/appraisals/[id]` (CTO review + approve/reject)
-2. Wire NextAuth v5 with the 3 roles (hash passwords in `data/users.json`)
-3. Later: provision Postgres, reimplement `repository.ts` with Prisma, migrate + seed
+1. **JSON-first backend** — repository/store, grading engine, all 7 README APIs.
+2. **Role-based UI** — login, dashboard, entry form (12 questions), developer
+   history, CTO appraisals list + detail (approve/reject), `/me`.
+3. **Teams** — `team` field, TL-scoped visibility, team badges, cross-team access
+   guards.
+4. **Schema refactor** — split `role`/`type`; `EMPLOYEE`→`DEVELOPER`; added
+   `MEMBER`/`ADMIN`.
+5. **Admin user CRUD** — `/admin/users`; create + **cascade-delete** (removes a
+   user's entries/answers/appraisals); self-delete blocked; admin-gated APIs (403).
+6. **Guide + inline hints** — role-aware `/guide` manual; grade-scale hint on the
+   entry form, thresholds/recommendation hint on the appraisal detail.
+7. **Dark UI restyle** — indigo/violet accent, gradient shell, new fonts.
+8. **Questionnaire CRUD** — `/admin/questions`; add/rename/archive dimensions,
+   add/edit/archive questions. **Archive = soft-delete for rated items;
+   hard-delete only when never rated; an active dimension must keep ≥1 active
+   question.**
+9. **Prisma/Postgres migration** — retired the JSON store; bcrypt password
+   hashing; seed reduced to **CTO + Team Lead + dimensions/questions only**;
+   `vercel-build` auto-provisions on deploy.
+
+### Pages
+- Team Lead: `/dashboard`, `/entry/[employeeId]`, `/developer/[id]`
+- CTO: `/appraisals`, `/appraisals/[id]`
+- Admin: `/admin/users`, `/admin/questions`
+- Developer: `/me` · Shared: `/login`, `/guide`
+
+### API routes (`src/app/api/`)
+- Auth: `auth/login`, `auth/logout`
+- Core: `users`, `questions`, `entries`(+`[developerId]`),
+  `appraisals`(+`generate`, `[id]`)
+- Admin (session-gated, 403 otherwise): `admin/users`(+`[id]`),
+  `admin/dimensions`(+`[id]`), `admin/questions`(+`[id]`)
+
+---
+
+## Seed (production starting data)
+
+`prisma/seed.ts` is **idempotent** (upserts; safe to re-run every deploy) and
+seeds ONLY:
+- **CTO** — Hussain Fakhruddin, `hussain@myalfred.com`, ADMIN, no team
+- **Team Lead** — Shahrukh Khan, `shahrukh@myalfred.com`, MEMBER, team API
+- 4 dimensions + 12 questions
+
+All seeded passwords: `password123` (bcrypt-hashed). No developers/entries/
+appraisals — the CTO adds developers via `/admin/users`.
+
+> Admin lives on the CTO account. If Shahrukh (Team Lead) should also administer,
+> set his `type` to `ADMIN`.
+
+---
+
+## Build / deploy
+
+- Local: `npm run dev` (needs `.env` with `DATABASE_URL`).
+- Vercel runs **`vercel-build`**: `prisma generate && prisma db push && prisma db seed && next build`
+  — creates tables + seeds automatically. (`db push`, not migrations, for now.)
+- Env vars required in Vercel: `DATABASE_URL` (pooled) and ideally
+  `DATABASE_URL_UNPOOLED` (direct, for `db push`). Neon integration sets both.
+
+---
+
+## Tooling / gotchas
+
+- **Postman:** `performance-review-app.postman_collection.json` — Auth, Admin
+  (users + questionnaire), Reference, Users, Entries, Appraisals.
+- Typecheck: `node node_modules/typescript/lib/tsc.js --noEmit -p tsconfig.json`
+  (must run `prisma generate` first so `@prisma/client` types exist).
+- Earlier `.bin` shim breakage was fixed by a clean `npm install`.
+
+---
+
+## Next steps / backlog
+
+1. **Confirm the Vercel deploy is green**; smoke-test login + a rate→appraise flow
+   on the live URL. If build fails, check the `db push` / `db seed` log lines.
+2. Consider moving from `db push` to real **Prisma migrations** once the schema
+   settles.
+3. Optional: replace the auth stub with **NextAuth v5** (Credentials provider).
+4. Backlog: mid-year check-ins, configurable dimension weights, PDF export,
+   CTO email notifications, audit log.
