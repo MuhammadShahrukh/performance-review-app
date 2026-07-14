@@ -4,20 +4,26 @@
     "name": "Hussain Fakhruddin",
     "email": "hussain@myalfred.com",
     "password": "password123",
-    "role": "CTO"
+    "type": "ADMIN",
+    "role": "CTO",
+    "team": null
   },
   {
     "id": "tl-1",
     "name": "Shahrukh Khan",
     "email": "shahrukh@myalfred.com",
     "password": "password123",
-    "role": "TEAM_LEAD"
+    "type": "MEMBER",
+    "role": "TEAM_LEAD",
+    "team": "API"
   },
   {
-    "id": "emp-1",
-    "name": "Qamar Shahzad",
-    "email": "qamar@myalfred.com",
+    "id": "usr-mrkmurljsti2oh",
+    "name": "Muhammad Haziq",
+    "email": "muhammad.haziq@myalfred.com",
     "password": "password123",
-    "role": "EMPLOYEE"
+    "type": "MEMBER",
+    "role": "DEVELOPER",
+    "team": "API"
   }
 ]

@@ -18,8 +18,8 @@ export async function POST(req: Request) {
     if (!Number.isInteger(year)) throw new ValidationError("year is required");
 
     const developer = await getUserById(developerId);
-    if (!developer || developer.role !== "EMPLOYEE") {
-      throw new ValidationError(`No employee with id ${developerId}`);
+    if (!developer || developer.role !== "DEVELOPER") {
+      throw new ValidationError(`No developer with id ${developerId}`);
     }
 
     const entries = await getEntriesForDeveloper(developerId, year);

@@ -65,7 +65,19 @@ export function homePathForRole(role: Role): string {
       return "/dashboard";
     case "CTO":
       return "/appraisals";
-    case "EMPLOYEE":
+    case "DEVELOPER":
       return "/me";
   }
+}
+
+/** Whether a user has system-admin access (manage users, config, etc.). */
+export function isAdmin(user: { type: SafeUser["type"] } | null): boolean {
+  return user?.type === "ADMIN";
+}
+
+/** Require a signed-in ADMIN; non-admins are bounced to their own home. */
+export async function requireAdmin(): Promise<SafeUser> {
+  const user = await requireUser();
+  if (user.type !== "ADMIN") redirect(homePathForRole(user.role));
+  return user;
 }

@@ -1,14 +1,74 @@
 [
-  { "id": "q-1",  "dimensionId": "dim-1", "text": "Delivered assigned tasks on time this month?" },
-  { "id": "q-2",  "dimensionId": "dim-1", "text": "Handled production issues / incidents responsibly?" },
-  { "id": "q-3",  "dimensionId": "dim-1", "text": "Required minimal follow-up or escalation?" },
-  { "id": "q-4",  "dimensionId": "dim-2", "text": "Produced clean, maintainable code?" },
-  { "id": "q-5",  "dimensionId": "dim-2", "text": "Participated in code reviews effectively?" },
-  { "id": "q-6",  "dimensionId": "dim-2", "text": "Reduced or managed tech debt responsibly?" },
-  { "id": "q-7",  "dimensionId": "dim-3", "text": "Communicated effectively with the team?" },
-  { "id": "q-8",  "dimensionId": "dim-3", "text": "Helped unblock teammates when needed?" },
-  { "id": "q-9",  "dimensionId": "dim-3", "text": "Contributed to documentation or knowledge sharing?" },
-  { "id": "q-10", "dimensionId": "dim-4", "text": "Proactively identified and raised problems?" },
-  { "id": "q-11", "dimensionId": "dim-4", "text": "Went beyond assigned scope when needed?" },
-  { "id": "q-12", "dimensionId": "dim-4", "text": "Proposed improvements to process, tooling, or architecture?" }
+  {
+    "id": "q-1",
+    "dimensionId": "dim-1",
+    "text": "Delivered assigned tasks on time this month?",
+    "active": true
+  },
+  {
+    "id": "q-2",
+    "dimensionId": "dim-1",
+    "text": "Handled production issues / incidents responsibly?",
+    "active": true
+  },
+  {
+    "id": "q-3",
+    "dimensionId": "dim-1",
+    "text": "Required minimal follow-up or escalation?",
+    "active": true
+  },
+  {
+    "id": "q-4",
+    "dimensionId": "dim-2",
+    "text": "Produced clean, maintainable code?",
+    "active": true
+  },
+  {
+    "id": "q-5",
+    "dimensionId": "dim-2",
+    "text": "Participated in code reviews effectively?",
+    "active": true
+  },
+  {
+    "id": "q-6",
+    "dimensionId": "dim-2",
+    "text": "Reduced or managed tech debt responsibly?",
+    "active": true
+  },
+  {
+    "id": "q-7",
+    "dimensionId": "dim-3",
+    "text": "Communicated effectively with the team?",
+    "active": true
+  },
+  {
+    "id": "q-8",
+    "dimensionId": "dim-3",
+    "text": "Helped unblock teammates when needed?",
+    "active": true
+  },
+  {
+    "id": "q-9",
+    "dimensionId": "dim-3",
+    "text": "Contributed to documentation or knowledge sharing?",
+    "active": true
+  },
+  {
+    "id": "q-10",
+    "dimensionId": "dim-4",
+    "text": "Proactively identified and raised problems?",
+    "active": true
+  },
+  {
+    "id": "q-11",
+    "dimensionId": "dim-4",
+    "text": "Went beyond assigned scope when needed?",
+    "active": true
+  },
+  {
+    "id": "q-12",
+    "dimensionId": "dim-4",
+    "text": "Proposed improvements to process, tooling, or architecture?",
+    "active": true
+  }
 ]

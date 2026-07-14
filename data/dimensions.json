@@ -1,6 +1,22 @@
 [
-  { "id": "dim-1", "name": "Delivery & Reliability" },
-  { "id": "dim-2", "name": "Code Quality" },
-  { "id": "dim-3", "name": "Collaboration" },
-  { "id": "dim-4", "name": "Initiative & Ownership" }
+  {
+    "id": "dim-1",
+    "name": "Delivery & Reliability",
+    "active": true
+  },
+  {
+    "id": "dim-2",
+    "name": "Code Quality",
+    "active": true
+  },
+  {
+    "id": "dim-3",
+    "name": "Collaboration",
+    "active": true
+  },
+  {
+    "id": "dim-4",
+    "name": "Initiative & Ownership",
+    "active": true
+  }
 ]

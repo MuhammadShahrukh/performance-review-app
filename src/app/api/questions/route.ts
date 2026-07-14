@@ -1,13 +1,16 @@
 import { handle, ok } from "@/lib/api";
-import { getDimensions, getQuestions } from "@/lib/data/repository";
+import {
+  getActiveDimensions,
+  getActiveQuestions,
+} from "@/lib/data/repository";
 
-// GET /api/questions → the 4 dimensions, each with its 3 questions.
+// GET /api/questions → the active dimensions, each with its active questions.
 // Reference data for building the monthly entry form.
 export async function GET() {
   return handle(async () => {
     const [dimensions, questions] = await Promise.all([
-      getDimensions(),
-      getQuestions(),
+      getActiveDimensions(),
+      getActiveQuestions(),
     ]);
     return ok(
       dimensions.map((d) => ({

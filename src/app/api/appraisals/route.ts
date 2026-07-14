@@ -1,5 +1,5 @@
 import { handle, ok } from "@/lib/api";
-import { getEmployees, getAppraisals } from "@/lib/data/repository";
+import { getDevelopers, getAppraisals } from "@/lib/data/repository";
 import { buildYearlySummary } from "@/lib/summary";
 
 // GET /api/appraisals?year=2026 → every employee with their computed yearly
@@ -10,7 +10,7 @@ export async function GET(req: Request) {
     const year = yearParam ? Number(yearParam) : new Date().getFullYear();
 
     const [employees, appraisals] = await Promise.all([
-      getEmployees(),
+      getDevelopers(),
       getAppraisals(),
     ]);
 

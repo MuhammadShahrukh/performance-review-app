@@ -1,4 +1,4 @@
-import { PrismaClient, Role, Grade, Decision } from '@prisma/client'
+import { PrismaClient, Role, UserType, Grade, Decision, Team } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -8,17 +8,20 @@ async function main() {
   const cto = await prisma.user.upsert({
     where: { email: 'hussain@myalfred.com' },
     update: {},
-    create: { id: 'cto-1', name: 'Hussain Fakhruddin', email: 'hussain@myalfred.com', role: Role.CTO },
+    create: { id: 'cto-1', name: 'Hussain Fakhruddin', email: 'hussain@myalfred.com', type: UserType.ADMIN, role: Role.CTO, team: null },
   })
 
   const teamLead = await prisma.user.upsert({
     where: { email: 'shahrukh@myalfred.com' },
     update: {},
-    create: { id: 'tl-1', name: 'Shahrukh Khan', email: 'shahrukh@myalfred.com', role: Role.TEAM_LEAD },
+    create: { id: 'tl-1', name: 'Shahrukh Khan', email: 'shahrukh@myalfred.com', type: UserType.MEMBER, role: Role.TEAM_LEAD, team: Team.API },
   })
 
   const employees = await Promise.all([
-    prisma.user.upsert({ where: { email: 'qamar@myalfred.com' }, update: {}, create: { id: 'emp-1', name: 'Qamar Shahzad', email: 'qamar@myalfred.com', role: Role.EMPLOYEE } }),
+    prisma.user.upsert({ where: { email: 'qamar@myalfred.com' }, update: {}, create: { id: 'emp-1', name: 'Qamar Shahzad', email: 'qamar@myalfred.com', type: UserType.MEMBER, role: Role.DEVELOPER, team: Team.API } }),
+    prisma.user.upsert({ where: { email: 'usman@myalfred.com' }, update: {}, create: { id: 'emp-2', name: 'Usman Tariq', email: 'usman@myalfred.com', type: UserType.MEMBER, role: Role.DEVELOPER, team: Team.API } }),
+    prisma.user.upsert({ where: { email: 'bilal@myalfred.com' }, update: {}, create: { id: 'emp-3', name: 'Bilal Ahmed', email: 'bilal@myalfred.com', type: UserType.MEMBER, role: Role.DEVELOPER, team: Team.CRM } }),
+    prisma.user.upsert({ where: { email: 'sana@myalfred.com' }, update: {}, create: { id: 'emp-4', name: 'Sana Malik', email: 'sana@myalfred.com', type: UserType.MEMBER, role: Role.DEVELOPER, team: Team.UI } }),
   ])
 
   console.log(`✓ Seeded ${2 + employees.length} users`)

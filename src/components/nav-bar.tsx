@@ -4,24 +4,31 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ROLE_LABEL } from "@/lib/labels";
-import type { Role } from "@/types";
+import { ROLE_LABEL, TEAM_LABEL } from "@/lib/labels";
+import type { Role, UserType, Team } from "@/types";
 
 interface NavUser {
   name: string;
+  type: UserType;
   role: Role;
+  team: Team | null;
 }
 
 const LINKS: Record<Role, { href: string; label: string }[]> = {
   TEAM_LEAD: [{ href: "/dashboard", label: "Dashboard" }],
   CTO: [{ href: "/appraisals", label: "Appraisals" }],
-  EMPLOYEE: [{ href: "/me", label: "My Reviews" }],
+  DEVELOPER: [{ href: "/me", label: "My Reviews" }],
 };
 
 export function NavBar({ user }: { user: NavUser }) {
   const pathname = usePathname();
   const router = useRouter();
-  const links = LINKS[user.role] ?? [];
+  const links = [...(LINKS[user.role] ?? [])];
+  if (user.type === "ADMIN") {
+    links.push({ href: "/admin/users", label: "Users" });
+    links.push({ href: "/admin/questions", label: "Questionnaire" });
+  }
+  links.push({ href: "/guide", label: "Guide" });
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -29,35 +36,61 @@ export function NavBar({ user }: { user: NavUser }) {
     router.refresh();
   }
 
+  const initials = user.name
+    .split(" ")
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("");
+
   return (
-    <header className="border-b bg-white dark:bg-zinc-950">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-        <div className="flex items-center gap-6">
-          <span className="font-semibold">Performance Review</span>
+    <header className="sticky top-0 z-20 border-b border-indigo-400/15 bg-gradient-to-r from-slate-950/85 via-slate-900/75 to-slate-950/85 shadow-lg shadow-black/30 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
+        <div className="flex items-center gap-7">
+          <Link href="/" className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white shadow-sm">
+              PR
+            </span>
+            <span className="hidden font-semibold tracking-tight sm:inline">
+              Performance&nbsp;Review
+            </span>
+          </Link>
           <nav className="flex gap-1">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className={cn(
-                  "rounded-md px-3 py-1.5 text-sm transition-colors",
-                  pathname === l.href || pathname.startsWith(l.href + "/")
-                    ? "bg-zinc-100 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
-                    : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100",
-                )}
-              >
-                {l.label}
-              </Link>
-            ))}
+            {links.map((l) => {
+              const active =
+                pathname === l.href || pathname.startsWith(l.href + "/");
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={cn(
+                    "rounded-lg px-3 py-1.5 text-sm transition-colors",
+                    active
+                      ? "bg-indigo-50 font-semibold text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300"
+                      : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100",
+                  )}
+                >
+                  {l.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
         <div className="flex items-center gap-3 text-sm">
-          <span className="text-zinc-600 dark:text-zinc-400">
-            {user.name}
-            <span className="ml-2 rounded bg-zinc-100 px-1.5 py-0.5 text-xs dark:bg-zinc-800">
-              {ROLE_LABEL[user.role]}
+          <div className="hidden items-center gap-2.5 sm:flex">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+              {initials}
             </span>
-          </span>
+            <div className="flex flex-col leading-tight">
+              <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                {user.name}
+              </span>
+              <span className="text-xs text-zinc-500">
+                {ROLE_LABEL[user.role]}
+                {user.team ? ` · ${TEAM_LABEL[user.team]}` : ""}
+                {user.type === "ADMIN" ? " · Admin" : ""}
+              </span>
+            </div>
+          </div>
           <Button variant="ghost" size="sm" onClick={logout}>
             Sign out
           </Button>

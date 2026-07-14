@@ -8,9 +8,21 @@ datasource db {
 }
 
 enum Role {
-  TEAM_LEAD
   CTO
-  EMPLOYEE
+  TEAM_LEAD
+  DEVELOPER
+}
+
+enum UserType {
+  MEMBER
+  ADMIN
+}
+
+enum Team {
+  API
+  CRM
+  HRM
+  UI
 }
 
 enum Grade {
@@ -30,7 +42,9 @@ model User {
   name           String
   email          String         @unique
   password       String
+  type           UserType       @default(MEMBER)
   role           Role
+  team           Team?
   monthlyEntries MonthlyEntry[]
   appraisals     Appraisal[]
 }
@@ -38,6 +52,7 @@ model User {
 model Dimension {
   id        String     @id @default(cuid())
   name      String
+  active    Boolean    @default(true)
   questions Question[]
 }
 
@@ -45,6 +60,7 @@ model Question {
   id          String               @id @default(cuid())
   text        String
   dimensionId String
+  active      Boolean               @default(true)
   dimension   Dimension            @relation(fields: [dimensionId], references: [id])
   answers     MonthlyEntryAnswer[]
 }

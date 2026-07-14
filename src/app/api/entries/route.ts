@@ -1,7 +1,7 @@
 import { handle, ok, parseJson } from "@/lib/api";
 import {
   getUserById,
-  getQuestions,
+  getActiveQuestions,
   createMonthlyEntry,
   ValidationError,
 } from "@/lib/data/repository";
@@ -42,11 +42,11 @@ export async function POST(req: Request) {
     if (!developer) {
       throw new ValidationError(`No user with id ${developerId}`);
     }
-    if (developer.role !== "EMPLOYEE") {
-      throw new ValidationError("Ratings can only be recorded for employees");
+    if (developer.role !== "DEVELOPER") {
+      throw new ValidationError("Ratings can only be recorded for developers");
     }
 
-    const questions = await getQuestions();
+    const questions = await getActiveQuestions();
     const questionIds = new Set(questions.map((q) => q.id));
 
     // Require exactly one answer per question, all questions covered.

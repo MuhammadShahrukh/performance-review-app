@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { GRADE_LABEL, GRADE_SHORT, DECISION_LABEL } from "@/lib/labels";
-import type { Grade, Decision } from "@/types";
+import { GRADE_LABEL, GRADE_SHORT, DECISION_LABEL, TEAM_LABEL } from "@/lib/labels";
+import type { Grade, Decision, Team } from "@/types";
 
 const GRADE_CLASSES: Record<Grade, string> = {
   EXCEEDS:
@@ -43,4 +43,22 @@ export function DecisionBadge({ decision }: { decision: Decision }) {
       {DECISION_LABEL[decision]}
     </Badge>
   );
+}
+
+const TEAM_CLASSES: Record<Team, string> = {
+  API: "border-transparent bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300",
+  CRM: "border-transparent bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300",
+  HRM: "border-transparent bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300",
+  UI: "border-transparent bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-300",
+};
+
+export function TeamBadge({ team }: { team: Team | null }) {
+  if (!team) {
+    return (
+      <Badge className="border-transparent bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+        —
+      </Badge>
+    );
+  }
+  return <Badge className={TEAM_CLASSES[team]}>{TEAM_LABEL[team]}</Badge>;
 }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { GradeScaleHint } from "@/components/grading-hints";
 import { GRADE_SHORT, MONTH_NAMES } from "@/lib/labels";
 import type { Grade } from "@/types";
 
@@ -105,7 +106,7 @@ export function EntryForm({
   return (
     <div className="flex flex-col gap-6">
       {/* Period selector */}
-      <div className="flex items-center gap-3 rounded-lg border bg-white p-4 dark:bg-zinc-950">
+      <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-900/40 p-4 shadow-lg shadow-black/20">
         <label className="text-sm font-medium">Period</label>
         <select
           value={month}
@@ -129,6 +130,8 @@ export function EntryForm({
           </span>
         )}
       </div>
+
+      {!readOnly && <GradeScaleHint />}
 
       {dimensions.map((dim) => (
         <Card key={dim.id}>

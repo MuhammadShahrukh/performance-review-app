@@ -1,8 +1,8 @@
 import { requireRole } from "@/lib/auth";
-import { getEmployees, getAppraisals } from "@/lib/data/repository";
+import { getDevelopers, getAppraisals } from "@/lib/data/repository";
 import { buildYearlySummary } from "@/lib/summary";
 import { ButtonLink } from "@/components/ui/button-link";
-import { GradeBadge, DecisionBadge } from "@/components/grade-badge";
+import { GradeBadge, DecisionBadge, TeamBadge } from "@/components/grade-badge";
 import { GenerateButton } from "./generate-button";
 import {
   Table,
@@ -22,12 +22,21 @@ export default async function AppraisalsPage() {
 
   const year = new Date().getFullYear();
   const [employees, appraisals] = await Promise.all([
-    getEmployees(),
+    getDevelopers(),
     getAppraisals(),
   ]);
 
+  // CTO sees all employees; group the list by team, then by name.
+  const sorted = employees
+    .slice()
+    .sort(
+      (a, b) =>
+        (a.team ?? "").localeCompare(b.team ?? "") ||
+        a.name.localeCompare(b.name),
+    );
+
   const rows = await Promise.all(
-    employees.map(async (emp) => {
+    sorted.map(async (emp) => {
       const summary = await buildYearlySummary(emp.id, year);
       const appraisal =
         appraisals.find((a) => a.developerId === emp.id && a.year === year) ??
@@ -45,11 +54,12 @@ export default async function AppraisalsPage() {
         </p>
       </div>
 
-      <div className="rounded-lg border bg-white dark:bg-zinc-950">
+      <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-900/40 shadow-xl shadow-black/20">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Employee</TableHead>
+              <TableHead>Team</TableHead>
               <TableHead>Score</TableHead>
               <TableHead>Grade</TableHead>
               <TableHead>Recommendation</TableHead>
@@ -63,6 +73,9 @@ export default async function AppraisalsPage() {
               return (
                 <TableRow key={emp.id}>
                   <TableCell className="font-medium">{emp.name}</TableCell>
+                  <TableCell>
+                    <TeamBadge team={emp.team} />
+                  </TableCell>
                   <TableCell className="tabular-nums">
                     {hasData ? summary.finalScore.toFixed(2) : "—"}
                   </TableCell>
@@ -96,7 +109,7 @@ export default async function AppraisalsPage() {
             {rows.length === 0 && (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="py-8 text-center text-sm text-zinc-500"
                 >
                   No employees yet.

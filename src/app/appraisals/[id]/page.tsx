@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { getAppraisalById, getUserById } from "@/lib/data/repository";
 import { buildYearlySummary } from "@/lib/summary";
 import { GradeBadge, DecisionBadge } from "@/components/grade-badge";
+import { ThresholdHint } from "@/components/grading-hints";
 import { DecisionForm } from "./decision-form";
 import { ButtonLink } from "@/components/ui/button-link";
 import {
@@ -69,7 +70,7 @@ export default async function AppraisalDetailPage({
           </CardHeader>
           <CardContent>
             <div className="mb-6 flex items-center gap-4">
-              <div className="text-3xl font-semibold tabular-nums">
+              <div className="bg-gradient-to-br from-indigo-600 to-violet-600 bg-clip-text text-4xl font-bold tabular-nums text-transparent dark:from-indigo-400 dark:to-violet-400">
                 {summary.finalScore.toFixed(2)}
               </div>
               <div className="flex flex-col gap-1">
@@ -98,6 +99,10 @@ export default async function AppraisalDetailPage({
                 ))}
               </TableBody>
             </Table>
+
+            <div className="mt-5">
+              <ThresholdHint />
+            </div>
           </CardContent>
         </Card>
 

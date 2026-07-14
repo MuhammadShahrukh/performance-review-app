@@ -1,5 +1,6 @@
-import { notFound } from "next/navigation";
-import { requireRole } from "@/lib/auth";
+import { notFound, redirect } from "next/navigation";
+import { requireRole, homePathForRole } from "@/lib/auth";
+import { canAccessEmployee } from "@/lib/access";
 import {
   getUserById,
   getDimensions,
@@ -8,7 +9,7 @@ import {
   getAnswersForEntries,
 } from "@/lib/data/repository";
 import { computeYearlySummary } from "@/lib/grading";
-import { GradeBadge } from "@/components/grade-badge";
+import { GradeBadge, TeamBadge } from "@/components/grade-badge";
 import { ButtonLink } from "@/components/ui/button-link";
 import {
   Card,
@@ -35,11 +36,13 @@ export default async function DeveloperPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireRole("TEAM_LEAD", "CTO");
+  const user = await requireRole("TEAM_LEAD", "CTO");
   const { id } = await params;
 
   const employee = await getUserById(id);
-  if (!employee || employee.role !== "EMPLOYEE") notFound();
+  if (!employee || employee.role !== "DEVELOPER") notFound();
+  // Team Lead is limited to their own team; CTO can view anyone.
+  if (!canAccessEmployee(user, employee)) redirect(homePathForRole(user.role));
 
   const year = new Date().getFullYear();
   const [dimensions, questions, entries] = await Promise.all([
@@ -78,7 +81,10 @@ export default async function DeveloperPage({
     <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">{employee.name}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-semibold">{employee.name}</h1>
+            <TeamBadge team={employee.team} />
+          </div>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
             {employee.email} · {year} review
           </p>
@@ -113,7 +119,7 @@ export default async function DeveloperPage({
             </CardHeader>
             <CardContent>
               <div className="mb-6 flex items-center gap-4">
-                <div className="text-3xl font-semibold tabular-nums">
+                <div className="bg-gradient-to-br from-indigo-600 to-violet-600 bg-clip-text text-4xl font-bold tabular-nums text-transparent dark:from-indigo-400 dark:to-violet-400">
                   {summary.finalScore.toFixed(2)}
                 </div>
                 <div className="flex flex-col gap-1">

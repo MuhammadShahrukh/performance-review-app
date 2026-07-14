@@ -1,9 +1,10 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth";
+import { canAccessEmployee } from "@/lib/access";
 import {
   getUserById,
-  getDimensions,
-  getQuestions,
+  getActiveDimensions,
+  getActiveQuestions,
   getEntriesForDeveloper,
   getAnswersForEntries,
 } from "@/lib/data/repository";
@@ -18,18 +19,20 @@ export default async function EntryPage({
 }: {
   params: Promise<{ employeeId: string }>;
 }) {
-  await requireRole("TEAM_LEAD");
+  const user = await requireRole("TEAM_LEAD");
   const { employeeId } = await params;
 
   const employee = await getUserById(employeeId);
-  if (!employee || employee.role !== "EMPLOYEE") notFound();
+  if (!employee || employee.role !== "DEVELOPER") notFound();
+  // A Team Lead may only rate their own team's employees.
+  if (!canAccessEmployee(user, employee)) redirect("/dashboard");
 
   const now = new Date();
   const year = now.getFullYear();
 
   const [dimensions, questions, entries] = await Promise.all([
-    getDimensions(),
-    getQuestions(),
+    getActiveDimensions(),
+    getActiveQuestions(),
     getEntriesForDeveloper(employeeId, year),
   ]);
   const answers = await getAnswersForEntries(entries.map((e) => e.id));

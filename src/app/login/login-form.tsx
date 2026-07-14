@@ -55,8 +55,11 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
+    <Card className="w-full max-w-sm border-zinc-200/80 shadow-xl shadow-indigo-500/5 dark:border-white/10">
+      <CardHeader className="items-center text-center">
+        <span className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-lg font-bold text-white shadow-lg shadow-indigo-500/30">
+          PR
+        </span>
         <CardTitle className="text-xl">Performance Review</CardTitle>
         <CardDescription>Sign in to continue</CardDescription>
       </CardHeader>

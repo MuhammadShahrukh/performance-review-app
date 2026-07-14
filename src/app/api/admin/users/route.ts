@@ -1,24 +1,28 @@
-import { handle, ok, parseJson } from "@/lib/api";
-import { getDevelopers, createUser } from "@/lib/data/repository";
-import { ValidationError } from "@/lib/data/repository";
-import type { Role, UserType, Team } from "@/types";
+import { handle, ok, fail, parseJson } from "@/lib/api";
+import { getCurrentUser } from "@/lib/auth";
+import { getUsers, createUser, ValidationError } from "@/lib/data/repository";
 import { TEAMS } from "@/types";
+import type { Role, UserType, Team } from "@/types";
 
 const VALID_ROLES: Role[] = ["CTO", "TEAM_LEAD", "DEVELOPER"];
 const VALID_TYPES: UserType[] = ["MEMBER", "ADMIN"];
 
-// GET /api/users → list all developers (the people who get rated)
+// GET /api/admin/users → list ALL users (every role), admin only.
 export async function GET() {
   return handle(async () => {
-    const developers = await getDevelopers();
-    // Never leak password hashes.
-    return ok(developers.map(({ password: _pw, ...rest }) => rest));
+    const me = await getCurrentUser();
+    if (!me || me.type !== "ADMIN") return fail("Admin access required", 403);
+    const users = await getUsers();
+    return ok(users.map(({ password: _pw, ...rest }) => rest));
   });
 }
 
-// POST /api/users → create a new user
+// POST /api/admin/users → create any user (admin only).
 export async function POST(req: Request) {
   return handle(async () => {
+    const me = await getCurrentUser();
+    if (!me || me.type !== "ADMIN") return fail("Admin access required", 403);
+
     const body = await parseJson<{
       name?: string;
       email?: string;
@@ -32,18 +36,13 @@ export async function POST(req: Request) {
     if (!body.email?.trim()) throw new ValidationError("email is required");
     if (!body.password) throw new ValidationError("password is required");
     if (!body.role || !VALID_ROLES.includes(body.role as Role)) {
-      throw new ValidationError(
-        `role must be one of ${VALID_ROLES.join(", ")}`,
-      );
+      throw new ValidationError(`role must be one of ${VALID_ROLES.join(", ")}`);
     }
-    // type defaults to MEMBER when omitted.
     const type: UserType = (body.type as UserType) ?? "MEMBER";
     if (!VALID_TYPES.includes(type)) {
       throw new ValidationError(`type must be one of ${VALID_TYPES.join(", ")}`);
     }
 
-    // Normalize/validate team. null is allowed (required for CTO); the
-    // role↔team consistency check lives in createUser.
     let team: Team | null = null;
     if (body.team != null && body.team !== "") {
       if (!TEAMS.includes(body.team as Team)) {

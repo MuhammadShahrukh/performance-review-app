@@ -1,6 +1,20 @@
 // Display-label helpers. Keep all user-facing text mappings in one place.
 
-import type { Grade, Decision, Recommendation, Role } from "@/types";
+import type {
+  Grade,
+  Decision,
+  Recommendation,
+  Role,
+  UserType,
+  Team,
+} from "@/types";
+
+export const TEAM_LABEL: Record<Team, string> = {
+  API: "API",
+  CRM: "CRM",
+  HRM: "HRM",
+  UI: "UI",
+};
 
 export const GRADE_LABEL: Record<Grade, string> = {
   EXCEEDS: "Exceeds Expectations",
@@ -27,9 +41,14 @@ export const RECOMMENDATION_LABEL: Record<Recommendation, string> = {
 };
 
 export const ROLE_LABEL: Record<Role, string> = {
-  TEAM_LEAD: "Team Lead",
   CTO: "CTO",
-  EMPLOYEE: "Employee",
+  TEAM_LEAD: "Team Lead",
+  DEVELOPER: "Developer",
+};
+
+export const TYPE_LABEL: Record<UserType, string> = {
+  MEMBER: "Member",
+  ADMIN: "Admin",
 };
 
 export const MONTH_NAMES = [

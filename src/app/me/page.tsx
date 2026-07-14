@@ -29,7 +29,7 @@ export const dynamic = "force-dynamic";
 
 // Minimal employee self-view (future role). Read-only summary of own ratings.
 export default async function MyReviewsPage() {
-  const user = await requireRole("EMPLOYEE");
+  const user = await requireRole("DEVELOPER");
 
   const year = new Date().getFullYear();
   const [dimensions, questions, entries] = await Promise.all([
@@ -74,7 +74,7 @@ export default async function MyReviewsPage() {
           </CardHeader>
           <CardContent>
             <div className="mb-6 flex items-center gap-4">
-              <div className="text-3xl font-semibold tabular-nums">
+              <div className="bg-gradient-to-br from-indigo-600 to-violet-600 bg-clip-text text-4xl font-bold tabular-nums text-transparent dark:from-indigo-400 dark:to-violet-400">
                 {summary.finalScore.toFixed(2)}
               </div>
               <div className="flex flex-col gap-1">

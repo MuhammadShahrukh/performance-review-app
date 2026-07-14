@@ -2,7 +2,17 @@
 // These mirror prisma/schema.prisma so the JSON layer can be swapped for
 // Prisma later without changing consumers (API routes, grading, pages).
 
-export type Role = "TEAM_LEAD" | "CTO" | "EMPLOYEE";
+// A user's job/position in the company. Extensible (add QA, DESIGNER, …).
+export type Role = "CTO" | "TEAM_LEAD" | "DEVELOPER";
+
+// A user's system access tier — orthogonal to their job role.
+// MEMBER = regular access; ADMIN = can administer the app (manage users, etc.).
+export type UserType = "MEMBER" | "ADMIN";
+
+export type Team = "API" | "CRM" | "HRM" | "UI";
+
+// All teams, for validation and select options.
+export const TEAMS: Team[] = ["API", "CRM", "HRM", "UI"];
 
 export type Grade = "EXCEEDS" | "MEETS" | "BELOW";
 
@@ -13,18 +23,26 @@ export interface User {
   name: string;
   email: string;
   password: string;
+  type: UserType;
   role: Role;
+  // The team this user belongs to. DEVELOPER and TEAM_LEAD have one; the CTO is
+  // org-wide, so null.
+  team: Team | null;
 }
 
 export interface Dimension {
   id: string;
   name: string;
+  // Archived dimensions/questions stay in the data (so historical ratings keep
+  // their meaning) but are hidden from new monthly entry forms.
+  active: boolean;
 }
 
 export interface Question {
   id: string;
   text: string;
   dimensionId: string;
+  active: boolean;
 }
 
 export interface MonthlyEntryAnswer {

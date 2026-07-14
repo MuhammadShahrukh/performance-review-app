@@ -12,6 +12,212 @@
   ],
   "item": [
     {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST login (admin/CTO)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"hussain@myalfred.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Sign in. Sets an httpOnly session cookie that Postman stores and reuses. Run this before the Admin requests (Hussain is the ADMIN). Team Lead: shahrukh@myalfred.com. All passwords: password123."
+          }
+        },
+        {
+          "name": "POST logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Clear the session cookie."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin (login as admin first)",
+      "item": [
+        {
+          "name": "GET all users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "users"]
+            },
+            "description": "List EVERY user (all roles). Admin only — 403 without an admin session."
+          }
+        },
+        {
+          "name": "POST create user",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@myalfred.com\",\n  \"password\": \"temp123\",\n  \"type\": \"MEMBER\",\n  \"role\": \"DEVELOPER\",\n  \"team\": \"CRM\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "users"]
+            },
+            "description": "Create any user. Admin only. type = MEMBER | ADMIN (default MEMBER); role = CTO | TEAM_LEAD | DEVELOPER; team required for TEAM_LEAD/DEVELOPER, null for CTO."
+          }
+        },
+        {
+          "name": "DELETE user (cascade)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "users", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "emp-4",
+                  "description": "id of the user to delete"
+                }
+              ]
+            },
+            "description": "Delete a user and cascade all their review data (monthly entries, answers, appraisals). Admin only. Returns a summary of what was removed. 400 if you try to delete your own account."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin — Questionnaire (login as admin first)",
+      "item": [
+        {
+          "name": "GET all dimensions + questions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/dimensions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "dimensions"]
+            },
+            "description": "Every dimension (active + archived) with its questions. Admin only."
+          }
+        },
+        {
+          "name": "POST create dimension",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ownership & Craft\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/dimensions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "dimensions"]
+            },
+            "description": "Create a dimension. Admin only."
+          }
+        },
+        {
+          "name": "PATCH dimension (rename / archive)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Renamed Dimension\",\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/dimensions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "dimensions", ":id"],
+              "variable": [{ "key": "id", "value": "dim-1" }]
+            },
+            "description": "Rename and/or archive/restore (active:false archives). Admin only."
+          }
+        },
+        {
+          "name": "DELETE dimension (only if never rated)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/dimensions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "dimensions", ":id"],
+              "variable": [{ "key": "id", "value": "dim-1" }]
+            },
+            "description": "Hard-delete a dimension and its questions — 409 if any question has recorded ratings (archive instead). Admin only."
+          }
+        },
+        {
+          "name": "POST create question",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dimensionId\": \"dim-1\",\n  \"text\": \"Escalated risks early?\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/questions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "questions"]
+            },
+            "description": "Add a question to a dimension. Admin only."
+          }
+        },
+        {
+          "name": "PATCH question (edit / archive)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Updated question text?\",\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/questions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "questions", ":id"],
+              "variable": [{ "key": "id", "value": "q-1" }]
+            },
+            "description": "Edit text and/or archive/restore. Archiving the last active question of an active dimension is blocked (400). Admin only."
+          }
+        },
+        {
+          "name": "DELETE question (only if never rated)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/questions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "questions", ":id"],
+              "variable": [{ "key": "id", "value": "q-1" }]
+            },
+            "description": "Hard-delete a question — 409 if it has recorded ratings (archive instead). Admin only."
+          }
+        }
+      ]
+    },
+    {
       "name": "Reference",
       "item": [
         {
@@ -42,7 +248,7 @@
               "host": ["{{base_url}}"],
               "path": ["api", "users"]
             },
-            "description": "List all employees (role EMPLOYEE). Passwords are never returned."
+            "description": "List all developers (role DEVELOPER). Passwords are never returned."
           }
         },
         {
@@ -52,14 +258,14 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"New Developer\",\n  \"email\": \"newdev@myalfred.com\",\n  \"password\": \"secret123\",\n  \"role\": \"EMPLOYEE\"\n}"
+              "raw": "{\n  \"name\": \"New Developer\",\n  \"email\": \"newdev@myalfred.com\",\n  \"password\": \"secret123\",\n  \"type\": \"MEMBER\",\n  \"role\": \"DEVELOPER\",\n  \"team\": \"API\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/users",
               "host": ["{{base_url}}"],
               "path": ["api", "users"]
             },
-            "description": "Create a user. role must be TEAM_LEAD | CTO | EMPLOYEE. 409 if email already exists, 400 on bad input."
+            "description": "Create a user. role must be CTO | TEAM_LEAD | DEVELOPER; type is MEMBER | ADMIN (defaults MEMBER); team is API|CRM|HRM|UI (required for TEAM_LEAD/DEVELOPER, must be null/omitted for CTO). 409 if email exists, 400 on bad input."
           }
         },
         {
