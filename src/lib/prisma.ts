@@ -1,9 +1,23 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+// Prisma 7 client connects through a driver adapter. PrismaPg pools connections
+// via `pg`; the pooled Neon URL is safe for Vercel's serverless functions.
+const globalForPrisma = globalThis as unknown as {
+  prisma?: PrismaClient;
+};
 
-const prisma = globalForPrisma.prisma ?? new PrismaClient()
+function createClient() {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL is not set");
+  }
+  const adapter = new PrismaPg({ connectionString });
+  return new PrismaClient({ adapter });
+}
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+const prisma = globalForPrisma.prisma ?? createClient();
 
-export default prisma
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+export default prisma;

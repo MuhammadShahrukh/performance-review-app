@@ -8,6 +8,7 @@
 // `auth()` from the NextAuth config and delete the login/logout API routes.
 // Page-level role guards (requireRole) will keep working unchanged.
 
+import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getUserById, getUserByEmail } from "@/lib/data/repository";
@@ -28,7 +29,7 @@ export async function verifyCredentials(
   password: string,
 ): Promise<SafeUser | null> {
   const user = await getUserByEmail(email);
-  if (!user || user.password !== password) return null;
+  if (!user || !bcrypt.compareSync(password, user.password)) return null;
   return toSafe(user);
 }
 
