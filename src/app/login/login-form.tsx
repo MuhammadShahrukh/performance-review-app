@@ -12,11 +12,6 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
-const DEMO_ACCOUNTS = [
-  { role: "Team Lead", email: "shahrukh@myalfred.com" },
-  { role: "CTO", email: "hussain@myalfred.com" },
-];
-
 export function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -98,26 +93,6 @@ export function LoginForm() {
             {loading ? "Signing in…" : "Sign in"}
           </Button>
         </form>
-
-        <div className="mt-6 rounded-md bg-zinc-100 p-3 text-xs text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
-          <p className="mb-1 font-medium">Demo accounts (password: password123)</p>
-          <ul className="space-y-0.5">
-            {DEMO_ACCOUNTS.map((a) => (
-              <li key={a.email}>
-                <button
-                  type="button"
-                  className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-200"
-                  onClick={() => {
-                    setEmail(a.email);
-                    setPassword("password123");
-                  }}
-                >
-                  {a.role}: {a.email}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
       </CardContent>
     </Card>
   );
