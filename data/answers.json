@@ -1,0 +1,146 @@
+[
+  {
+    "id": "me-1-a1",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-1",
+    "grade": "EXCEEDS"
+  },
+  {
+    "id": "me-1-a2",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-2",
+    "grade": "EXCEEDS"
+  },
+  {
+    "id": "me-1-a3",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-3",
+    "grade": "MEETS"
+  },
+  {
+    "id": "me-1-a4",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-4",
+    "grade": "EXCEEDS"
+  },
+  {
+    "id": "me-1-a5",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-5",
+    "grade": "MEETS"
+  },
+  {
+    "id": "me-1-a6",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-6",
+    "grade": "MEETS"
+  },
+  {
+    "id": "me-1-a7",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-7",
+    "grade": "EXCEEDS"
+  },
+  {
+    "id": "me-1-a8",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-8",
+    "grade": "EXCEEDS"
+  },
+  {
+    "id": "me-1-a9",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-9",
+    "grade": "MEETS"
+  },
+  {
+    "id": "me-1-a10",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-10",
+    "grade": "EXCEEDS"
+  },
+  {
+    "id": "me-1-a11",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-11",
+    "grade": "MEETS"
+  },
+  {
+    "id": "me-1-a12",
+    "monthlyEntryId": "me-1",
+    "questionId": "q-12",
+    "grade": "EXCEEDS"
+  },
+  {
+    "id": "ans-mrk8x69k8fcf48",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-1",
+    "grade": "EXCEEDS"
+  },
+  {
+    "id": "ans-mrk8x69k3e5ugq",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-2",
+    "grade": "MEETS"
+  },
+  {
+    "id": "ans-mrk8x69kbzpgbx",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-3",
+    "grade": "MEETS"
+  },
+  {
+    "id": "ans-mrk8x69kunzdn3",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-4",
+    "grade": "EXCEEDS"
+  },
+  {
+    "id": "ans-mrk8x69kk8h8fs",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-5",
+    "grade": "MEETS"
+  },
+  {
+    "id": "ans-mrk8x69kzweqa8",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-6",
+    "grade": "BELOW"
+  },
+  {
+    "id": "ans-mrk8x69kn0wx7n",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-7",
+    "grade": "EXCEEDS"
+  },
+  {
+    "id": "ans-mrk8x69khzx9bd",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-8",
+    "grade": "MEETS"
+  },
+  {
+    "id": "ans-mrk8x69kksq7ar",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-9",
+    "grade": "MEETS"
+  },
+  {
+    "id": "ans-mrk8x69kwcp7ol",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-10",
+    "grade": "EXCEEDS"
+  },
+  {
+    "id": "ans-mrk8x69krnm928",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-11",
+    "grade": "MEETS"
+  },
+  {
+    "id": "ans-mrk8x69kjx9nzl",
+    "monthlyEntryId": "me-mrk8x69kch6gob",
+    "questionId": "q-12",
+    "grade": "EXCEEDS"
+  }
+]

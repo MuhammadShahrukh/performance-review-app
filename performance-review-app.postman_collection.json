@@ -1,0 +1,221 @@
+{
+  "info": {
+    "name": "Performance Review App (Local)",
+    "description": "API collection for the Performance Review app running JSON-first (no DB).\n\nStart the dev server first:\n  npm run dev\n\nBase URL is the `base_url` collection variable (default http://localhost:3000).\n\nSeeded ids you can use immediately:\n- employee: emp-1 (Qamar Shahzad)\n- appraisal: apr-1 (emp-1, 2026)\n- question ids: q-1 .. q-12\n- grades: EXCEEDS | MEETS | BELOW",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000", "type": "string" },
+    { "key": "developerId", "value": "emp-1", "type": "string" },
+    { "key": "appraisalId", "value": "apr-1", "type": "string" },
+    { "key": "year", "value": "2026", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Reference",
+      "item": [
+        {
+          "name": "GET dimensions + questions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/questions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "questions"]
+            },
+            "description": "The 4 dimensions, each with its 3 questions. Reference data for building the monthly entry form."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "GET employees",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"]
+            },
+            "description": "List all employees (role EMPLOYEE). Passwords are never returned."
+          }
+        },
+        {
+          "name": "POST create user",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Developer\",\n  \"email\": \"newdev@myalfred.com\",\n  \"password\": \"secret123\",\n  \"role\": \"EMPLOYEE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Create a user. role must be TEAM_LEAD | CTO | EMPLOYEE. 409 if email already exists, 400 on bad input."
+          }
+        },
+        {
+          "name": "POST create user — bad role (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"X\",\n  \"email\": \"x@y.com\",\n  \"password\": \"x\",\n  \"role\": \"MANAGER\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Expects 400 — MANAGER is not a valid role."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Entries",
+      "item": [
+        {
+          "name": "GET entries for developer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/entries/{{developerId}}?year={{year}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "entries", "{{developerId}}"],
+              "query": [{ "key": "year", "value": "{{year}}" }]
+            },
+            "description": "All monthly entries (with their answers) for an employee. The ?year filter is optional."
+          }
+        },
+        {
+          "name": "POST monthly entry (12 answers)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"developerId\": \"{{developerId}}\",\n  \"month\": 2,\n  \"year\": 2026,\n  \"answers\": [\n    { \"questionId\": \"q-1\",  \"grade\": \"EXCEEDS\" },\n    { \"questionId\": \"q-2\",  \"grade\": \"MEETS\" },\n    { \"questionId\": \"q-3\",  \"grade\": \"MEETS\" },\n    { \"questionId\": \"q-4\",  \"grade\": \"EXCEEDS\" },\n    { \"questionId\": \"q-5\",  \"grade\": \"MEETS\" },\n    { \"questionId\": \"q-6\",  \"grade\": \"BELOW\" },\n    { \"questionId\": \"q-7\",  \"grade\": \"EXCEEDS\" },\n    { \"questionId\": \"q-8\",  \"grade\": \"MEETS\" },\n    { \"questionId\": \"q-9\",  \"grade\": \"MEETS\" },\n    { \"questionId\": \"q-10\", \"grade\": \"EXCEEDS\" },\n    { \"questionId\": \"q-11\", \"grade\": \"MEETS\" },\n    { \"questionId\": \"q-12\", \"grade\": \"EXCEEDS\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/entries",
+              "host": ["{{base_url}}"],
+              "path": ["api", "entries"]
+            },
+            "description": "Submit a monthly entry. Requires an answer for ALL 12 questions with valid grades.\n\n- 201 on success\n- 409 if an entry already exists for that developer/month/year\n- 400 if answers are incomplete, duplicated, or reference unknown questions"
+          }
+        },
+        {
+          "name": "POST monthly entry — incomplete (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"developerId\": \"{{developerId}}\",\n  \"month\": 3,\n  \"year\": 2026,\n  \"answers\": [\n    { \"questionId\": \"q-1\", \"grade\": \"MEETS\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/entries",
+              "host": ["{{base_url}}"],
+              "path": ["api", "entries"]
+            },
+            "description": "Expects 400 — only 1 of 12 answers supplied."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appraisals",
+      "item": [
+        {
+          "name": "GET all appraisals (CTO list)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/appraisals?year={{year}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appraisals"],
+              "query": [{ "key": "year", "value": "{{year}}" }]
+            },
+            "description": "Every employee with their live-computed yearly summary (dimension breakdown, final grade, recommendation) and stored appraisal decision. ?year defaults to the current year."
+          }
+        },
+        {
+          "name": "POST generate appraisal",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"developerId\": \"{{developerId}}\",\n  \"year\": 2026\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appraisals/generate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appraisals", "generate"]
+            },
+            "description": "Average all monthly data into a yearly grade and upsert the appraisal (existing CTO decision/note is preserved on regeneration). 400 if the employee has no entries for that year."
+          }
+        },
+        {
+          "name": "GET appraisal detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/appraisals/{{appraisalId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appraisals", "{{appraisalId}}"]
+            },
+            "description": "Full detail: appraisal + employee + dimension breakdown (recomputed live). 404 if not found."
+          }
+        },
+        {
+          "name": "PUT approve appraisal",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"APPROVED\",\n  \"ctoNote\": \"Strong year, approved.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appraisals/{{appraisalId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appraisals", "{{appraisalId}}"]
+            },
+            "description": "CTO decision. decision must be APPROVED or REJECTED; ctoNote is optional. 400 on invalid decision, 404 if the appraisal doesn't exist."
+          }
+        },
+        {
+          "name": "PUT reject appraisal",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"REJECTED\",\n  \"ctoNote\": \"Needs another cycle.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/appraisals/{{appraisalId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "appraisals", "{{appraisalId}}"]
+            },
+            "description": "Reject with a note."
+          }
+        }
+      ]
+    }
+  ]
+}
